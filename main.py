@@ -16,7 +16,7 @@ from prompts import PROMPT
 load_dotenv()
 
 model = ChatOpenAI(
-    model="qwen3-32b",
+    model="qwen3-30b-a3b-instruct-2507",
     api_key=os.environ["QWEN_API_KEY"],
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
@@ -28,7 +28,7 @@ tool_node = ToolNode(tools)
 
 model_with_tools = model.bind_tools(tools)
 
-prompt_template = ChatPromptTemplate([
+prompt_template = ChatPromptTemplate.from_messages([
         ("system", PROMPT),
         ("placeholder", "{messages}")
     ]
@@ -40,7 +40,7 @@ class State(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
 def call_model(state: State):
-    response = chain.invoke(state["messages"])
+    response = chain.invoke({"messages": state["messages"]})
     return {"messages": [response]}
     
 graph_workflow = StateGraph(State)
