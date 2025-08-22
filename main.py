@@ -4,6 +4,7 @@ from typing import TypedDict, Annotated
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage
+from langchain_core.prompts import ChatPromptTemplate
 from langgraph.graph.message import add_messages
 from langgraph.graph.state import StateGraph
 from langgraph.graph import END, START
@@ -20,16 +21,27 @@ model = ChatOpenAI(
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
 
+
+
 tools = [calculator, sql_read, extract_data, fig_inter, get_date]
 tool_node = ToolNode(tools)
 
 model_with_tools = model.bind_tools(tools)
 
+prompt_template = ChatPromptTemplate([
+        ("system", PROMPT),
+        ("placeholder", "{messages}")
+    ]
+)
+
+chain = prompt_template | model_with_tools
+
 class State(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
 def call_model(state: State):
-    return {"messages": [model_with_tools.invoke(state["messages"])]}
+    response = chain.invoke(state["messages"])
+    return {"messages": [response]}
     
 graph_workflow = StateGraph(State)
 
