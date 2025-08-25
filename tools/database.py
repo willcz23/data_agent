@@ -42,6 +42,8 @@ def sql_read(sql_query: str) -> str:
         with connection.cursor() as cursor:
             cursor.execute(sql_query)
             results = cursor.fetchall()
+    except Exception as e:
+        return f"wrong: {e}"
     finally:
         connection.close()
     
