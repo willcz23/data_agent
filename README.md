@@ -67,11 +67,17 @@ langgraph dev
 创建 `.env` 文件并填写以下内容：
 
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
-LANGCHAIN_TRACING_V2=true
-LANGCHAIN_API_KEY=your_langchain_api_key
-LANGCHAIN_PROJECT=data_agent_demo
-DATABASE_URL=sqlite:///./test.db  # 或其他数据库
+QWEN_API_KEY=your_api_key
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=your_api_key
+LANGSMITH_PROJECT=your_project_name
+HOST=your_host
+USER=your_root
+MYSQL_PW=your_password
+DB=your_database_name
+PORT=your_port
 ```
+
+LangSmith用于追踪Agent运行状态
 
 现在你可以访问 `http://localhost:3000` 开始与你的数据对话！
