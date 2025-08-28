@@ -16,7 +16,7 @@ from prompts import PROMPT
 load_dotenv()
 
 model = ChatOpenAI(
-    model="qwen3-30b-a3b-instruct-2507",
+    model="qwen3-30b-a3b",
     api_key=os.environ["QWEN_API_KEY"],
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
@@ -59,4 +59,4 @@ graph_workflow.add_conditional_edges(
     }
 )
 
-graph = graph_workflow.compile()
+graph = graph_workflow.compile().with_config({"recursion_limit": 50})
