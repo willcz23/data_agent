@@ -78,6 +78,15 @@ DB=your_database_name
 PORT=your_port
 ```
 
+在main.py中配置选择的model，例如
+```py
+model = ChatOpenAI(
+    model="qwen3-30b-a3b",
+    api_key=os.environ["QWEN_API_KEY"],
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+)
+```
+
 LangSmith用于追踪Agent运行状态
 
 现在你可以访问 `http://localhost:3000` 开始与你的数据对话！
