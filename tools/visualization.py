@@ -28,13 +28,12 @@ def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
     返回Markdown格式的图片引用，供前端直接显示。
     """
 
-    print(f"🟢 正在执行绘图工具: fig_inter")
-    print(f"📌 图像变量名: {fig_var}")
-    print(f"📌 期望文件名: {file_name}.png")
+    print(f"正在执行绘图工具: fig_inter")
+    print(f"图像变量名: {fig_var}")
+    print(f"期望文件名: {file_name}.png")
     
     current_backend = matplotlib.get_backend()
     matplotlib.use('Agg')
-    # print(f"图像保存目录: {images_dir}")
     plt.rcParams['font.sans-serif'] = [
         'SimHei',       # Windows 黑体
         'Microsoft YaHei',  # Windows 微软雅黑
@@ -43,6 +42,8 @@ def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
         'Arial Unicode MS'  # 跨平台
     ]
     plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
+
+
     local_vars = {"plt": plt, "pd": pd, "sns": sns}
     
     # 添加全局变量到本地环境（重要！）
@@ -51,11 +52,8 @@ def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
     # 导入 database 模块以访问其中设置的全局变量
     try:
         import tools.database as db_module
-        # 将 database 模块的全局变量添加到执行环境
-        for key, value in db_module.__dict__.items():
-            if isinstance(value, pd.DataFrame):
-                local_vars[key] = value
-                print(f"📊 已加载全局变量 '{key}': {value.shape[0]} 行，{value.shape[1]} 列")
+        local_vars.update(db_module.__dict__)
+        print(f"已导入tools.database数据")
     except Exception as e:
         print(f"⚠️ 无法加载 database 模块的全局变量: {e}")
 
