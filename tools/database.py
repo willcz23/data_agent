@@ -88,9 +88,18 @@ def extract_data(sql_query: str, df_name: str) -> str:
 
     try:
         df = pd.read_sql(sql_query, connection)
+        # 将 DataFrame 存储到全局变量中，供后续工具使用
         globals()[df_name] = df
-        print("数据成功提取并保存为全局变量：", df_name)
-        return f"成功创建pandas对象 {df_name},包含从 MySQL 提取的数据。"
+        print(f"✅ 数据提取成功：{df.shape[0]} 行，{df.shape[1]} 列，保存为全局变量 '{df_name}'")
+        
+        # 同时返回结构化数据，包含变量名和 DataFrame
+        # return {
+        #     "status": "success",
+        #     "data": df,           # 实际数据对象
+        #     "var_name": df_name,  # 建议使用的变量名
+        #     "shape": df.shape,
+        #     "columns": df.columns.tolist()
+        # }
     except Exception as e:
         return f"执行失败 {e}"
     finally:

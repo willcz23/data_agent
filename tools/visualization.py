@@ -47,6 +47,17 @@ def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
     
     # 添加全局变量到本地环境（重要！）
     local_vars.update(globals())
+    
+    # 导入 database 模块以访问其中设置的全局变量
+    try:
+        import tools.database as db_module
+        # 将 database 模块的全局变量添加到执行环境
+        for key, value in db_module.__dict__.items():
+            if isinstance(value, pd.DataFrame):
+                local_vars[key] = value
+                print(f"📊 已加载全局变量 '{key}': {value.shape[0]} 行，{value.shape[1]} 列")
+    except Exception as e:
+        print(f"⚠️ 无法加载 database 模块的全局变量: {e}")
 
     try:
         # 设置图像保存路径

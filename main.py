@@ -16,7 +16,7 @@ from prompts import PROMPT
 load_dotenv()
 
 model = ChatOpenAI(
-    model="qwen3-30b-a3b",
+    model="qwen3-235b-a22b-instruct-2507",
     api_key=os.environ["QWEN_API_KEY"],
     base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
 )
