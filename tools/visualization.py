@@ -23,7 +23,7 @@ class FigCodeInput(BaseModel):
 @tool(args_schema=FigCodeInput)
 def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
     """
-    执行Python绘图代码，并将图像保存为指定名称的PNG文件。
+    执行Python绘图代码
     如果不需要绘图，就不要调用这个工具
     返回Markdown格式的图片引用，供前端直接显示。
     """
@@ -44,7 +44,7 @@ def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
     plt.rcParams['axes.unicode_minus'] = False  # 正常显示负号
 
 
-    local_vars = {"plt": plt, "pd": pd, "sns": sns}
+    local_vars = {"plt": plt, "pd": pd, "sns": sns, "os": os}
     
     # 添加全局变量到本地环境（重要！）
     local_vars.update(globals())
@@ -59,54 +59,43 @@ def fig_inter(py_code: str, fig_var: str, file_name: str) -> str:
 
     try:
         # 设置图像保存路径
-        working_dir = os.getcwd()
-        base_dir = os.path.join(working_dir, "agent-chat-ui", "public")
-        images_dir = os.path.join(base_dir, "images")
+        current_dir = os.path.dirname(__file__)  # tools/ 目录
+        project_root = os.path.dirname(current_dir)  # 项目根目录
+        # 3. 定位前端 public 目录
+        frontend_public = os.path.join(project_root, "agent-chat-ui", "public")
+        frontend_public = os.path.abspath(frontend_public)  # 转为绝对路径
+        # 4. 图片保存目录
+        images_dir = os.path.join(frontend_public, "images")
         os.makedirs(images_dir, exist_ok=True)
-    
 
-        image_filename = f"{file_name}.png"
-        abs_path = os.path.join(images_dir, image_filename)
-        # 添加时间戳防止浏览器缓存
+        abs_path = os.path.join(images_dir, f"{file_name}.png")
         cache_buster = int(time.time())
-        rel_path = f"/images/{file_name}.png?t={cache_buster}"
+        rel_path = f"/images/{file_name}.png?t={cache_buster}"  # 前端通过此 URL 访问
 
-
-        
+        print(f"🖼️  图像将保存到: {abs_path}")
+        print(f"🌐 前端访问路径: {rel_path}")
         print("开始执行绘图代码...")
+        
         exec(py_code, globals(), local_vars)
-        
-        
         fig = local_vars.get(fig_var)
 
-        print(f"查找变量 {fig_var}: {'找到了' if fig else '未找到'}")
-        
         if fig is None:
-            # 尝试获取当前图像
             fig = plt.gcf()
             if not fig.axes:
                 return "❌ 错误：绘图代码未生成有效图像内容。请检查代码是否正确绘制了图表。"
             print(f"⚠️ 未找到变量 '{fig_var}'，使用 plt.gcf() 获取当前图像。")
-        
-        if fig:
-            fig.savefig(abs_path, bbox_inches='tight', dpi=120, facecolor='w')
-            plt.close(fig)  # 立即释放内存
-            # fig.savefig(abs_path, bbox_inches='tight')
-            
-            print(f"✅ 图像已保存: {abs_path}")
 
-            # 返回 Markdown 图片语法（带防缓存参数）
-            markdown_image = f"![{file_name}]({rel_path})"
-            return markdown_image
+        fig.savefig(abs_path, bbox_inches='tight', dpi=120, facecolor='w')
+        plt.close(fig)
+        print(f"✅ 图像已保存: {abs_path}")
         
-            # 返回Markdown格式的图片链接，供前端直接显示
-            # return f"![Generated Chart]({rel_path})"
+        return f"![{file_name}]({rel_path})"
         
     except Exception as e:
         import traceback
         error_msg = f"❌ 绘图执行失败: {str(e)}\n{traceback.format_exc()}"
         print(error_msg)
-        return f"绘图失败: {str(e)}"
+        return f"绘图失败: {str(e)}, {error_msg}"
     
     finally:
         plt.close('all')

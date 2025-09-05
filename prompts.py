@@ -27,7 +27,6 @@ PROMPT = """
     *   生成**完整绘图代码**:
         *   必须创建**`fig`图像对象** (如 `fig = plt.figure()` 或 `fig, ax = plt.subplots()`)。
         *   禁止调用 `plt.show()`，否则无法保存图片。
-        *   在代码末尾**明确保存图片** (如 `fig.savefig('images/sales_trend.png')`)。
     *   回答中**必须用Markdown插入图片**: `![描述](images/sales_trend.png)`
 4.  **`calculator` (数值计算):**
     *   当用户的查询涉及**数值计算、公式推导、指标运算**时必须调用。
