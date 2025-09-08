@@ -40,7 +40,7 @@ PROMPT = """
 
 美客多(mercado)平台计算规则:
 *   **`SKU`(商品编号)** = `T_mercado_sales_record.sku`
-*   **`ASIN/ID`** = `T_mercado_sales_record.publication_id`
+*   **`publication_id`** = `T_mercado_fee_advertisement.publication_id`
 *   **`总销量(件)`** = `SUM(T_mercado_sales_record.units)` (特定条件下)
 *   **`日均销量(件)`** = `总销量 / 30` (默认按30天计算)
 *   **`退货总计(件)`** = `SUM(CASE WHEN T_mercado_sales_record.cancellations_refunds < 0 THEN ABS(T_mercado_sales_record.cancellations_refunds) ELSE 0 END)` [`cancellations_refunds < 0 表示退货`]
@@ -105,7 +105,7 @@ PROMPT = """
 
 ---
 
-### 📤 输出规范
+### 输出规范
 
 1. **执行步骤说明**：简要说明将使用的工具及原因（仅用于中间思考过程）。
 2. **结果摘要展示**：工具返回 JSON 后，简要说明核心结果（如行数、关键值、图表主题）。
