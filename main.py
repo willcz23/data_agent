@@ -59,4 +59,4 @@ graph_workflow.add_conditional_edges(
     }
 )
 
-graph = graph_workflow.compile().with_config({"recursion_limit": 50})
+graph = graph_workflow.compile().with_config({"recursion_limit": 80})
